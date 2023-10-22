@@ -51,6 +51,7 @@ class Parser:
         if tok.type_ in (TT_INT, TT_FLOAT):
             self.advance()
             return NumberNode(tok)
+        
 
 
     def term(self):

@@ -13,3 +13,8 @@ class Error:
 class InvalidCharError(Error):
     def __init__(self, details, pos_start, pos_end) -> None:
         super().__init__(details, 'Illegal Character', pos_start, pos_end)
+
+
+class InvalidSyntaxError(Error):
+    def __init__(self, details, pos_start, pos_end) -> None:
+        super().__init__(details, 'Invalid Syntax', pos_start, pos_end)
