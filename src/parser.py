@@ -2,6 +2,32 @@ from .nodes import *
 from .constants import *
 
 
+
+class ParseResult:
+    def __init__(self) -> None:
+        self.node = None 
+        self.error = None 
+
+        # register each node - keep track of errors
+        def register(self, res):
+            if isinstance(res, ParseResult):
+                if res.error: self.error = res.error 
+
+                return res.node 
+            
+            return res
+        
+        # called if syntax valid    
+        def success(self, node):
+            self.node = node 
+            return self
+
+        # called if syntax invalid  
+        def failure(self, error):
+            self.error = error 
+            return self
+
+
 class Parser:
     def __init__(self, tokens):
         self.tokens = tokens 
