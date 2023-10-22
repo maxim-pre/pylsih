@@ -186,15 +186,27 @@ class Parser:
         tok = self.current_tok 
 
         if tok.type in [TT_INT, TT_FLOAT]:
-            self.advance
+            self.advance()
             return NumberNode(tok)
 
 
-    def term():
-        pass 
+    def term(self):
+        return self.binOp(self.factor, (TT_DIV, TT_MUL))
 
-    def expr():
-        pass 
+    def expr(self):
+        return self.binOp(self.term, (TT_PLUS, TT_MINUS))
+
+    def binOp(self, func, ops):
+        left = func()
+
+        while self.current_tok.type in ops:
+            op_tok = self.current_tok 
+            right = func()
+            left = BinOpNode(left, op_tok, right)
+
+        return left
+            
+
 
         
 
