@@ -4,9 +4,17 @@ from .errors import InvalidCharError
 
 
 class Token:
-    def __init__(self, type_, value=None) -> None:
+    def __init__(self, type_, value=None, pos_start=None, pos_end=None) -> None:
         self.type_ = type_ 
         self.value = value 
+
+        if pos_start:
+            self.pos_start = pos_start
+            self.pos_end = pos_start.copy()
+            self.pos_end.advance()
+
+        if pos_end:
+            self.pos_end = pos_end
 
     def __repr__(self) -> str:
         if self.value: return f'{self.type_}:{self.value}'
@@ -53,22 +61,22 @@ class Lexer:
             elif self.current_char in DIGITS:
                 tokens.append(self.make_number())
             elif self.current_char == '/':
-                tokens.append(Token(TT_DIV))
+                tokens.append(Token(TT_DIV, pos_start=self.pos))
                 self.advance()
             elif self.current_char == '*':
-                tokens.append(Token(TT_MUL))
+                tokens.append(Token(TT_MUL, pos_start=self.pos))
                 self.advance()
             elif self.current_char == '+':
-                tokens.append(Token(TT_PLUS))
+                tokens.append(Token(TT_PLUS, pos_start=self.pos))
                 self.advance()
             elif self.current_char == '-':
-                tokens.append(Token(TT_MINUS))
+                tokens.append(Token(TT_MINUS, pos_start=self.pos))
                 self.advance()
             elif self.current_char == '(':
-                tokens.append(Token(TT_LPAREN))
+                tokens.append(Token(TT_LPAREN, pos_start=self.pos))
                 self.advance()
             elif self.current_char == ')':
-                tokens.append(Token(TT_RPAREN))
+                tokens.append(Token(TT_RPAREN, pos_start=self.pos))
                 self.advance()
             else:
                 pos_start = self.pos.copy()
