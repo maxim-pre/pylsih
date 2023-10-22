@@ -11,4 +11,4 @@ def run(text):
     parser = Parser(tokens)
     ast = parser.parse()
 
-    return ast, error
+    return ast.node, ast.error

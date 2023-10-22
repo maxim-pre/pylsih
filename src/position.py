@@ -6,7 +6,7 @@ class Position:
         self.file_name = file_name 
         self.ftxt = ftxt 
     
-    def advance(self, current_char):
+    def advance(self, current_char=None):
         self.idx +=1 
         self.col +=1 
 

@@ -1,5 +1,6 @@
 from .nodes import *
 from .constants import *
+from .errors import InvalidSyntaxError
 
 
 
@@ -8,24 +9,24 @@ class ParseResult:
         self.node = None 
         self.error = None 
 
-        # register each node - keep track of errors
-        def register(self, res):
-            if isinstance(res, ParseResult):
-                if res.error: self.error = res.error 
+        # register parsed expression, terms and factors - keep track of errors
+    def register(self, res):
+        if isinstance(res, ParseResult):
+            if res.error: self.error = res.error 
 
-                return res.node 
-            
-            return res
+            return res.node 
         
-        # called if syntax valid    
-        def success(self, node):
-            self.node = node 
-            return self
+        return res
+    
+    # called if syntax valid    
+    def success(self, node):
+        self.node = node 
+        return self
 
-        # called if syntax invalid  
-        def failure(self, error):
-            self.error = error 
-            return self
+    # called if syntax invalid  
+    def failure(self, error):
+        self.error = error 
+        return self
 
 
 class Parser:
@@ -47,10 +48,14 @@ class Parser:
 
     def factor(self):
         tok = self.current_tok 
+        res = ParseResult()
 
         if tok.type_ in (TT_INT, TT_FLOAT):
-            self.advance()
-            return NumberNode(tok)
+            res.register(self.advance())
+            return res.success(NumberNode(tok))
+        else:
+            return res.failure(InvalidSyntaxError('Expected Int or Float', tok.pos_start, tok.pos_end))
+
         
 
 
@@ -61,13 +66,16 @@ class Parser:
         return self.bin_op(self.term, (TT_PLUS, TT_MINUS))
 
     def bin_op(self, func, ops):
-        left = func()
+        res = ParseResult()
+        left = res.register(func())
 
         while self.current_tok.type_ in ops:
             op_tok = self.current_tok 
-            self.advance()
-            right = func()
+            res.register(self.advance())
+            right = res.register(func())
+            if res.error: return res 
+            
             left = BinOpNode(left, op_tok, right)
 
-        return left
+        return res.success(left)
             
