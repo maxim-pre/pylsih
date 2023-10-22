@@ -160,7 +160,7 @@ class BinOpNode:
         self.right_node = right_node 
     
     def __repr__(self) -> str:
-        return f'{self.left_node}, {self.op_tok}, {self.right_node}'
+        return f'({self.left_node}, {self.op_tok}, {self.right_node})'
     
 
 
@@ -179,28 +179,33 @@ class Parser:
         self.tok_idx +=1
 
         if self.tok_idx < len(self.tokens):
-            self.current_tok = self.tokens(self.tok_idx)
+            self.current_tok = self.tokens[self.tok_idx]
         return self.current_tok
+    
+    def parse(self):
+        res = self.expr()
+        return res
 
     def factor(self):
         tok = self.current_tok 
 
-        if tok.type in [TT_INT, TT_FLOAT]:
+        if tok.type_ in (TT_INT, TT_FLOAT):
             self.advance()
             return NumberNode(tok)
 
 
     def term(self):
-        return self.binOp(self.factor, (TT_DIV, TT_MUL))
+        return self.bin_op(self.factor, (TT_DIV, TT_MUL))
 
     def expr(self):
-        return self.binOp(self.term, (TT_PLUS, TT_MINUS))
+        return self.bin_op(self.term, (TT_PLUS, TT_MINUS))
 
-    def binOp(self, func, ops):
+    def bin_op(self, func, ops):
         left = func()
 
-        while self.current_tok.type in ops:
+        while self.current_tok.type_ in ops:
             op_tok = self.current_tok 
+            self.advance()
             right = func()
             left = BinOpNode(left, op_tok, right)
 
@@ -219,10 +224,15 @@ class Parser:
 ###################################################
 
 def run(text):
+    # generate tokens from text
     lexer = Lexer(text, 'test.py')
     tokens, error = lexer.make_token_sequence()
 
-    return tokens, error
+    #generate ast (abstract search tree)
+    parser = Parser(tokens)
+    ast = parser.parse()
+
+    return ast, error
 
 
 
