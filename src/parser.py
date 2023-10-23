@@ -53,6 +53,23 @@ class Parser:
         if tok.type_ in (TT_INT, TT_FLOAT):
             res.register(self.advance())
             return res.success(NumberNode(tok))
+        
+        elif tok.type_ in (TT_PLUS, TT_MINUS):
+            res.register(self.advance())
+            factor = res.register(self.factor())
+            if res.error: return res 
+            return  res.success(UnaryOpNode(tok, factor))
+        
+        elif tok.type_ == TT_LPAREN:
+            res.register(self.advance())
+            expr = res.register(self.expr())
+            if res.error: return res 
+            if self.current_tok.type_ == TT_RPAREN:
+                res.register(self.advance())
+                return res.success(expr)
+            else:
+                return res.failure(InvalidSyntaxError("expected ')'", self.current_tok.start_pos, self.current_tok.end_pos))
+
         else:
             return res.failure(InvalidSyntaxError('Expected Int or Float', tok.pos_start, tok.pos_end))
 
