@@ -1,11 +1,13 @@
 from .tokenizer import Lexer
-from .parser import Parser
+from .parser_ import Parser
 
 
 def run(text):
     # generate tokens from text
     lexer = Lexer(text, 'test.py')
     tokens, error = lexer.make_token_sequence()
+
+    if error: return None, error
 
     #generate ast (abstract search tree)
     parser = Parser(tokens)

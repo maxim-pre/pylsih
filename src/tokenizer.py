@@ -35,6 +35,7 @@ class Lexer:
     def make_number(self):
         num_str = ''
         dot_count = 0 
+        pos_start = self.pos.copy()
 
         while self.current_char != None and self.current_char in DIGITS + '.':
             if self.current_char == '.':
@@ -46,9 +47,9 @@ class Lexer:
             self.advance()
         
         if dot_count == 1:
-            return Token(TT_FLOAT, float(num_str))
+            return Token(TT_FLOAT, float(num_str), pos_start=pos_start, pos_end=self.pos)
         else:
-            return Token(TT_INT, int(num_str))
+            return Token(TT_INT, int(num_str), pos_start=pos_start, pos_end = self.pos)
 
 
 
@@ -83,5 +84,6 @@ class Lexer:
                 char = self.current_char 
                 return [], InvalidCharError("'" + char + "'", pos_start, self.pos)
         
+        tokens.append(Token(TT_EOF, pos_start=self.pos))
         return tokens, None
     

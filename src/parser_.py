@@ -44,6 +44,9 @@ class Parser:
     
     def parse(self):
         res = self.expr()
+        tok = self.current_tok
+        if not res.error and tok.type_ != TT_EOF:
+            return res.failure(InvalidSyntaxError("expected '+', '-', '/', '*'", tok.pos_start, tok.pos_end ))
         return res
 
     def factor(self):
@@ -68,7 +71,7 @@ class Parser:
                 res.register(self.advance())
                 return res.success(expr)
             else:
-                return res.failure(InvalidSyntaxError("expected ')'", self.current_tok.start_pos, self.current_tok.end_pos))
+                return res.failure(InvalidSyntaxError("expected ')'", self.current_tok.pos_start, self.current_tok.pos_end))
 
         else:
             return res.failure(InvalidSyntaxError('Expected Int or Float', tok.pos_start, tok.pos_end))
