@@ -85,6 +85,7 @@ class Parser:
     def bin_op(self, func, ops):
         res = ParseResult()
         left = res.register(func())
+        if res.error: return res
 
         while self.current_tok.type_ in ops:
             op_tok = self.current_tok 
