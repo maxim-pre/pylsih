@@ -12,5 +12,6 @@ def run(text):
     #generate ast (abstract search tree)
     parser = Parser(tokens)
     ast = parser.parse()
+    print(type(ast.node.left_node))
 
     return ast.node, ast.error
