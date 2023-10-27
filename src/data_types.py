@@ -22,4 +22,5 @@ class Number:
     def multiplied_to(self, other):
         if isinstance(other, Number):
             return Number(self.value * other.value)
-    
+    def __repr__(self) -> str:
+        return str(self.value)
