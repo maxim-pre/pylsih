@@ -1,5 +1,6 @@
 from .tokenizer import Lexer
 from .parser_ import Parser
+from .interpreter import Interpreter
 
 
 def run(text):
@@ -12,6 +13,12 @@ def run(text):
     #generate ast (abstract search tree)
     parser = Parser(tokens)
     ast = parser.parse()
-    print(type(ast.node.left_node))
+    
+    if ast.error: return None, ast.error 
 
-    return ast.node, ast.error
+    interpreter = Interpreter()
+    result = interpreter.visit(ast.node)
+
+    
+
+    return result.value, result.error

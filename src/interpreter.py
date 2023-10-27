@@ -1,4 +1,5 @@
 from.data_types import *
+from .constants import *
 
 class RTResult:
     def __init__(self):
@@ -19,9 +20,7 @@ class RTResult:
 
 
 
-class interpreter:
-    def __init__(self, node):
-        self.node = node
+class Interpreter:
     
     def visit(self, node):
         method_name = f'visit_{type(node).__name__}'
@@ -33,3 +32,29 @@ class interpreter:
     
     def visit_NumberNode(self, node):
         return RTResult().success(Number(node.tok.value).set_position(node.pos_start, node.pos_end))
+    
+    def visit_BinOpNode(self, node):
+        res = RTResult()
+        left = res.register(self.visit(node.left_node))
+        print(left)
+        if res.error: return res
+        right = res.register(self.visit(node.right_node))
+        if res.error: return res 
+
+        op_tok = node.op_tok 
+        result = error = None
+
+        if op_tok.type_ == TT_PLUS:
+            result, error = left.added_to(right)
+        if op_tok.type_ == TT_MINUS:
+            result, error = left.subbed_to(right)
+        if op_tok.type_ == TT_DIV:
+            result, error = left.divided_to(right)
+        if op_tok.type_ == TT_MUL:
+            result, error = left.multiplied_to(right)
+        
+        if error: 
+            return res.failure(error)
+        else:
+            return res.success(result)
+        
