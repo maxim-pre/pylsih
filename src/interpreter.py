@@ -1,4 +1,4 @@
-from.data_types import *
+from .data_types import Number
 from .constants import *
 
 class RTResult:
@@ -36,7 +36,6 @@ class Interpreter:
     def visit_BinOpNode(self, node):
         res = RTResult()
         left = res.register(self.visit(node.left_node))
-        print(left)
         if res.error: return res
         right = res.register(self.visit(node.right_node))
         if res.error: return res 
