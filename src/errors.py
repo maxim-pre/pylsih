@@ -21,3 +21,7 @@ class InvalidCharError(Error):
 class InvalidSyntaxError(Error):
     def __init__(self, details, pos_start, pos_end) -> None:
         super().__init__(details, 'Invalid Syntax', pos_start, pos_end)
+
+class RunTimeError(Error):
+    def __init__(self, details, pos_start, pos_end) -> None:
+        super().__init__(details, 'RunTime error', pos_start, pos_end)

@@ -1,3 +1,5 @@
+from .errors import RunTimeError
+
 class Number:
     def __init__(self, value) -> None:
         self.value = value 
@@ -19,6 +21,8 @@ class Number:
         
     def divided_to(self, other):
         if isinstance(other, Number):
+            if other.value == 0:
+                return None, RunTimeError('divided by zero error', self.pos_start, other.pos_end)
             return Number(self.value / other.value), None
         
     def multiplied_to(self, other):
